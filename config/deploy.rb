@@ -11,7 +11,8 @@ set :branch, "deployment"
 # Default deploy_to directory is /var/www/my_app_name
 # set :deploy_to, '/var/www/my_app_name'
 
-set :deploy_to, '/var/www/#{fetch(:application)}'
+#set :deploy_to, '/var/www/#{fetch(:application)}'
+set :deploy_to, '/var/www/jorani'
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -22,12 +23,11 @@ set :format, :pretty
 # Default value for :log_level is :debug
 # set :log_level, :debug
 set :user,              "deployer"
-
 set :group,             "www-data"
 set :webserver_user,    "www-data"
 set :permission_method, :acl
-set :use_sudo,          false
-set :copy_dir,                  "/tmp/sftp"
+set :use_sudo,          :false
+set :copy_dir,          "/tmp/sftp"
 
 
 # Default value for :pty is false
@@ -65,24 +65,13 @@ namespace :deploy do
       # end
     end
   end
-
 end
 
-namespace :myapp do
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      execute "sudo /etc/init.d/apache2 restart"  ## -> line you should add
+    end
+  end
 
-   task :restart_webserver do
-
-      #Show Start of Task
-      print "Restarting webserver..."
-
-      # Restart Web Server
-      run "#{sudo} service apache2 restart"
-
-      # Show Green Check Mark on Completion
-      puts checkmark.gsub(/\\u[\da-f]{4}/i) { |m| [m[-4..-1].to_i(16)].pack('U') }.green
-
-   end
-
-end
-
-after "deploy:restart","myapp:restart_webserver"
+after :deploy, :restart

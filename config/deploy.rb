@@ -2,7 +2,7 @@
 lock '3.4.0'
 
 set :application, 'jorani'
-set :repo_url, 'https://github.com/jankocharlie/jorani.git'
+set :repo_url, 'git url'
 set :branch, "deployment"
 
 # Default branch is :master
